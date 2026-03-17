@@ -34,12 +34,12 @@ window.bso = { ip: "127.0.0.1", po: 8080 }; window.forcing = true;
 
 ## TODO
 
-- [ ] Fix collision detection misalignment
-- [ ] Fix rotation issues
-- [ ] Fix boost problems
-- [ ] Fix bot movement
-- [ ] Fix prey behavior
-- [ ] Fix food spawning
+- [x] Fix collision detection misalignment
+- [x] Fix rotation issues
+- [x] Fix boost problems
+- [x] Fix bot movement
+- [x] Fix prey behavior
+- [x] Fix food spawning
 
 ## Contributing
 
