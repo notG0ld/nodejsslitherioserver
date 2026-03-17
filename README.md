@@ -32,15 +32,6 @@ Open Slither.io → press F12 → go to **Console** tab → paste this:
 window.bso = { ip: "127.0.0.1", po: 8080 }; window.forcing = true;
 ```
 
-## TODO
-
-- [x] Fix collision detection misalignment
-- [x] Fix rotation issues
-- [x] Fix boost problems
-- [x] Fix bot movement
-- [x] Fix prey behavior
-- [x] Fix food spawning
-
 ## Contributing
 
 Contributions are very welcome! Feel free to help fix the issues above or add new features.
