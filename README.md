@@ -8,12 +8,12 @@
 
 1. Clone repo
 ```bash
-git clone https://github.com/xbact/slitherio-server.git
+git clone https://github.com/xbact/nodejsslitherioserver.git
 ```
 
 2. Enter folder
 ```bash
-cd slither-server
+cd nodejsslitherioserver
 ```
 3. Install dependencies
 ```bash
@@ -29,7 +29,7 @@ npm start
 Open Slither.io → press F12 → go to **Console** tab → paste this:
 
 ```js
-window.bso = { ip: "127.0.0.1", po: 8080 }; window.forcing = true; window.want_play = true;
+window.bso = { ip: "127.0.0.1", po: 8080 }; window.forcing = true;
 ```
 
 ## TODO
