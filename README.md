@@ -1,6 +1,6 @@
 # Slither.io Server
 
-![screenshot](asset/shot.png)
+![screenshot](asset/screenshot.png)
 
 
 ## Installation
@@ -33,7 +33,7 @@ window.bso = { ip: "127.0.0.1", po: 8080 }; window.forcing = true;
 ```
 
 ## TODO
-[ ] Add support for TCP connections
+-[ ] Add support for TCP connections
 
 ## Contributing
 
