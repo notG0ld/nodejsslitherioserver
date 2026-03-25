@@ -5,23 +5,41 @@ const { PI2 } = require('../utils/math');
 function decodeLoginPacket(data) {
   if (data.length < 4 || data[0] !== 0x73) return null;
 
-  if (data.length >= 26) {
+  const version = data[1];
+
+  // vlither-style long format (version=30): 20-byte padding at bytes 4-23, skin at byte 24
+  if (version === 30 && data.length >= 26) {
     const skin = data[24];
     const nameLen = Math.min(data[25], 24, data.length - 26);
     let name = '';
     for (let i = 0; i < nameLen; i++) {
       name += String.fromCharCode(data[26 + i]);
     }
-    return { version: (data[1] << 8) | data[2], skin, name, isProtocol13: false };
+    return { version, skin, name, isProtocol13: false };
   }
 
+  // New-style short format (version >= 20, e.g. protocol14.js sends version=31):
+  // [0x73][version][client_ver_hi][client_ver_lo][skin][name_len][name...]
+  if (version >= 20) {
+    if (data.length < 6) return null;
+    const skin = data[4];
+    const nameLen = Math.min(data[5], 24, data.length - 6);
+    let name = '';
+    for (let i = 0; i < nameLen; i++) {
+      name += String.fromCharCode(data[6 + i]);
+    }
+    return { version, skin, name, isProtocol13: false };
+  }
+
+  // Old short format (protocol13-style, version <= 19):
+  // [0x73][version][skin][name_len][name...]
   const skin = data[2];
   const nameLen = Math.min(data[3], 24, data.length - 4);
   let name = '';
   for (let i = 0; i < nameLen; i++) {
     name += String.fromCharCode(data[4 + i]);
   }
-  return { version: data[1], skin, name, isProtocol13: true };
+  return { version, skin, name, isProtocol13: true };
 }
 
 function decodeAngle(byte) {

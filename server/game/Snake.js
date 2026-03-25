@@ -40,6 +40,7 @@ class Snake {
     this.pendingBodyPoints = [];
     this.pendingTailRemoves = 0;
     this.pendingBoostDrops = [];
+    this.boostFoodTimer = 0;    // countdown to next boost food drop (~188ms = 4 ticks)
 
     this.player = null;
 
@@ -199,8 +200,10 @@ class Snake {
         this._updateDerived();
         this.pendingTailRemoves++;
       }
-      // Drop food from tail every tick while boosting
-      if (this.body.length > 0) {
+      // Drop food from tail ~every 188ms (4 ticks at 20tps)
+      this.boostFoodTimer--;
+      if (this.boostFoodTimer <= 0 && this.body.length > 0) {
+        this.boostFoodTimer = 4;
         const tail = this.body[0];
         const spread = this.getBodyRadius() * 0.6;
         const dropAngle = Math.random() * PI2;

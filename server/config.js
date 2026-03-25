@@ -24,13 +24,13 @@ module.exports = {
 
   // Physics
   SPANGDV: 4.8,                 // spangdv * 10 = 48
-  NSP1: 4.25,                   // nsp1 * 100 = 425 (base speed)
-  NSP2: 0.5,                    // nsp2 * 100 = 50  (speed per sc)
-  NSP3: 12.0,                   // nsp3 * 100 = 1200 (boost extra)
+  NSP1: 5.39,                   // nsp1 * 100 = 539 (base speed; new snake ~5790 client units)
+  NSP2: 0.40,                   // nsp2 * 100 = 40  (speed per sc; max base ~7200 at sc≈4.5)
+  NSP3: 12.0,                   // nsp3 * 100 = 1200 (boost extra; total capped at 14.0)
   MAMU: 0.033,                  // mamu * 1000 = 33  (turn rate)
   MAMU2: 0.028,                 // mamu2 * 1000 = 28
   CST: 0.43,                    // cst * 1000 = 430
-  BOOST_FAM_LOSS: 0.025,        // fam lost per tick while boosting (~2s per segment at 20tps)
+  BOOST_FAM_LOSS: 0.032,        // fam lost per tick while boosting; tuned so eating all boost food = ~90% recovery
 
   // Snake defaults
   INITIAL_SEGMENTS: 2,
@@ -39,7 +39,7 @@ module.exports = {
 
   // Food
   FOOD_SPAWN_RATE: 1,          // foods per tick
-  MAX_FOOD_PER_SECTOR: 50,
+  MAX_FOOD_PER_SECTOR: 10,
   FOOD_BASE_RADIUS: 2.5,
   FOOD_COLORS: 42,
   FOOD_VALUE: 0.03,             // fam gain per food (20 foods = 1 segment)
