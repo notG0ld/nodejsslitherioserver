@@ -121,26 +121,6 @@ class BotManager {
 
   // Chaser bot
   _updateChaser(snakeId, snake) {
-    // Avoid nearby snake bodies first
-    const avoidRange = 250;
-    const nearbyPts = this.engine.bodyGrid.query(snake.x, snake.y, avoidRange);
-    let nearestBodyDist = Infinity;
-    let nearestBodyAngle = 0;
-    for (const pt of nearbyPts) {
-      if (pt._snakeId === snakeId) continue;
-      const ddx = pt.x - snake.x;
-      const ddy = pt.y - snake.y;
-      const d = Math.sqrt(ddx * ddx + ddy * ddy);
-      if (d < nearestBodyDist) {
-        nearestBodyDist = d;
-        nearestBodyAngle = Math.atan2(ddy, ddx);
-      }
-    }
-    if (nearestBodyDist < avoidRange) {
-      snake.setWantAngle(normalizeAngle(nearestBodyAngle + Math.PI));
-      return;
-    }
-
     let target = null;
     let minDist = Infinity;
     for (const other of this.engine.snakes.values()) {
@@ -167,34 +147,9 @@ class BotManager {
     const cx = config.GAME_CENTER;
     const cy = config.GAME_CENTER;
     const score = snake.getScore();
-    const isSuicide = score >= config.BOT_NORMAL_SUICIDE_SCORE;
 
-    snake.setBoost(false);
-
-    // Check for nearby snake body segments using spatial grid (always, even in suicide mode)
-    const avoidRange = 300;
-    const nearbyPts = this.engine.bodyGrid.query(snake.x, snake.y, avoidRange);
-    let nearestBodyDist = Infinity;
-    let nearestBodyAngle = 0;
-    for (const pt of nearbyPts) {
-      if (pt._snakeId === snakeId) continue;
-      const ddx = pt.x - snake.x;
-      const ddy = pt.y - snake.y;
-      const d = Math.sqrt(ddx * ddx + ddy * ddy);
-      if (d < nearestBodyDist) {
-        nearestBodyDist = d;
-        nearestBodyAngle = Math.atan2(ddy, ddx);
-      }
-    }
-
-    // Avoid snake bodies (highest priority, even in suicide mode)
-    if (nearestBodyDist < avoidRange) {
-      snake.setWantAngle(normalizeAngle(nearestBodyAngle + Math.PI));
-      return;
-    }
-
-    // Suicide mode: head toward wall
-    if (isSuicide) {
+    // Suicide mode
+    if (score >= config.BOT_NORMAL_SUICIDE_SCORE) {
       const dx = snake.x - cx;
       const dy = snake.y - cy;
       const distToCenter = Math.sqrt(dx * dx + dy * dy);
@@ -202,6 +157,32 @@ class BotManager {
         snake.setWantAngle(Math.random() * PI2);
       } else {
         snake.setWantAngle(normalizeAngle(Math.atan2(dy, dx)));
+      }
+      snake.setBoost(false);
+      return;
+    }
+
+    snake.setBoost(false);
+
+    // Check for nearby snakes
+    let nearestSnakeDist = Infinity;
+    let nearestSnakeAngle = 0;
+    const avoidRange = 200;
+    for (const other of this.engine.snakes.values()) {
+      if (other.id === snakeId || !other.alive) continue;
+      const d = distance(snake.x, snake.y, other.x, other.y);
+      if (d < avoidRange && d < nearestSnakeDist) {
+        nearestSnakeDist = d;
+        nearestSnakeAngle = Math.atan2(other.y - snake.y, other.x - snake.x);
+      }
+    }
+
+    // Avoid snakes
+    if (nearestSnakeDist < avoidRange) {
+      const fleeAngle = normalizeAngle(nearestSnakeAngle + Math.PI);
+      snake.setWantAngle(fleeAngle);
+      if (nearestSnakeDist < 100) {
+        snake.setBoost(false);
       }
       return;
     }

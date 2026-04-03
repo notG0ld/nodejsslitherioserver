@@ -127,21 +127,7 @@ class WsServer {
     }
     if (!login.isProtocol13 && player.clientType === 'protocol13') {
       player.clientType = 'protocol11';
-    }
-
-    // For wantEtm clients, the handshake sets a default; override with login version.
-    // For non-wantEtm clients (e.g. protocol13.js), the handshake already set the
-    // correct version (e.g. 13 via data[1]===0x04 check) — do not override it.
-    if (player.wantEtm) {
-      if (login.version >= 11 && login.version <= 19) {
-        player.protocolVersion = login.version;
-      } else if (login.version === 31) {
-        // protocol14.js-style clients (ba[1]=31) support up to protocol 14
-        player.protocolVersion = 14;
-      } else {
-        // vlither (ba[1]=30) requires PROTOCOL_VERSION=19 and rejects anything else
-        player.protocolVersion = config.PROTOCOL_VERSION;
-      }
+      player.protocolVersion = config.PROTOCOL_VERSION;
     }
 
     console.log(`[Login] Player ${player.id}: name="${login.name}" skin=${login.skin} proto=${player.protocolVersion}`);

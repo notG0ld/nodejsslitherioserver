@@ -177,7 +177,7 @@ class GameEngine {
       }, 5000);
     }
 
-    if (killedBy && killedBy !== 'wall') {
+    if (killedBy) {
       const deathFoods = [];
       const skinCv = snake.skin % 9;
 
@@ -211,8 +211,8 @@ class GameEngine {
       }
     }
 
-    // Update killer's kill count (wall kills don't credit any player)
-    if (killedBy && killedBy !== 'wall') {
+    // Update killer's kill count
+    if (killedBy) {
       const killer = this.snakes.get(killedBy);
       if (killer) {
         killer.killCount++;
@@ -355,7 +355,7 @@ class GameEngine {
     for (const [id, snake] of this.snakes) {
       const result = snake.update(dt);
       if (result === 'boundary') {
-        deadSnakes.push({ id, killedBy: 'wall' });
+        deadSnakes.push({ id, killedBy: null });
         continue;
       }
 
@@ -374,8 +374,7 @@ class GameEngine {
       }
       for (const drop of snake.pendingBoostDrops) {
         const skinCv = snake.skin % 9;
-        // Boost food size scales with snake size: byte≈24 for small (sc=1), byte≈34 for large (sc≈4.75)
-        const radius = 4.4 + 0.5 * snake.sc;
+        const radius = config.BOOST_DROP_RADIUS * (0.5 + snake.sc * 0.2);
         const cv = (skinCv + Math.floor(Math.random() * 3)) % config.FOOD_COLORS;
         const food = this.food.spawnFood(drop.x, drop.y, cv, radius, true);
         if (food) {
@@ -679,7 +678,9 @@ class GameEngine {
         const sizeRatio = food.radius / config.FOOD_BASE_RADIUS;
         snake.fam += config.FOOD_VALUE * sizeRatio * sizeRatio;
 
-        this._broadcastFoodEat(food, snake.id);
+        this.broadcastNearVersioned(snake.x, snake.y, (pv) =>
+          encoder.encodeFoodEat(food.sx, food.sy, food.rx, food.ry, snake.id, pv)
+        );
 
         this.food.removeFood(food);
       }
@@ -1017,22 +1018,12 @@ class GameEngine {
   }
 
   broadcastFoodSpawnVersioned(food) {
-    const key = (food.sx << 8) | (food.sy & 0xFF);
     for (const player of this.players.values()) {
       if (!player.snake || !player.snake.alive) continue;
       if (!player.visibleFoodSectors) continue;
+      const key = (food.sx << 8) | (food.sy & 0xFF);
       if (!player.visibleFoodSectors.has(key)) continue;
       player.send(encoder.encodeFoodSpawn(food.sx, food.sy, food.rx, food.ry, food.cv, food.radius, player.protocolVersion));
-    }
-  }
-
-  _broadcastFoodEat(food, eaterId) {
-    const key = (food.sx << 8) | (food.sy & 0xFF);
-    for (const player of this.players.values()) {
-      if (!player.snake || !player.snake.alive) continue;
-      if (!player.visibleFoodSectors) continue;
-      if (!player.visibleFoodSectors.has(key)) continue;
-      player.send(encoder.encodeFoodEat(food.sx, food.sy, food.rx, food.ry, eaterId, player.protocolVersion));
     }
   }
 
