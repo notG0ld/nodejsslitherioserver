@@ -10,7 +10,7 @@ const wsServer = new WsServer(game);
 game.start();
 wsServer.start(config.PORT, config.HOST);
 const rootDir = path.resolve(__dirname, '..');
-createHttpServer(rootDir, 8888);
+//createHttpServer(rootDir, 8888);
 
 console.log('');
 console.log('Open 127.0.0.1:8080');
