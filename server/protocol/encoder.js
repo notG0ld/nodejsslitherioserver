@@ -82,7 +82,7 @@ function encodeSnakeSpawn(snake, protocolVersion) {
     nameChars.push(snake.name.charCodeAt(i));
   }
   const nl = nameChars.length;
-  const bytesPerChar = protocolVersion < 12 ? 2 : 1;
+  const bytesPerChar = protocolVersion < 11 ? 2 : 1;
   const pts = snake.body;
 
   // Body length calculation depends
