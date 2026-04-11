@@ -30,7 +30,7 @@ function runOpenSSL(args) {
     });
 }
 
-// Detect newest PFX in config.CERTH_PATH
+// Detect newest PFX in config.CERT_PATH
 function getLatestPfx(dir) {
     const files = fs.readdirSync(dir)
         .filter(f => f.toLowerCase().endsWith('.pfx'))
@@ -84,11 +84,11 @@ class WsServer {
         let server;
 
         if (config.HTTPS) {
-            const pfxPath = getLatestPfx(config.CERTH_PATH);
+            const pfxPath = getLatestPfx(config.CERT_PATH);
             console.log("Detected PFX:", pfxPath);
 
-            const outKey = path.join(config.CERTH_PATH, "node-key.pem");
-            const outCert = path.join(config.CERTH_PATH, "node-cert.pem");
+            const outKey = path.join(config.CERT_PATH, "node-key.pem");
+            const outCert = path.join(config.CERT_PATH, "node-cert.pem");
 
             // Extract PEMs and WAIT
             await extractPemsFromPfx(pfxPath, outKey, outCert);
