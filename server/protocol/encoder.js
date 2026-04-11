@@ -414,7 +414,7 @@ function encodeFoodEatSimple(sx, sy, rx, ry, protocolVersion) {
 function encodeLeaderboard(myPos, rank, snakeCount, entries, protocolVersion) {
   // entries: [{sct, fam, cv, name}]
   protocolVersion = protocolVersion || config.PROTOCOL_VERSION;
-  const bytesPerChar = protocolVersion < 12 ? 2 : 1;
+  const bytesPerChar = protocolVersion < 11 ? 2 : 1;
   // Only send actual entries; clients use while(m<alen) so they read exactly what's sent
   const totalSlots = entries.length;
   let totalLen = 6;
